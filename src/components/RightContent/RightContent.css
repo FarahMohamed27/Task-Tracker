@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+.josefin-sans-normal {
+    font-family: "Josefin Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 200;
+    font-style: normal;
+  }
+.right-container{
+    width: 82%;
+    /* text-align: center; */
+    padding-top: 5px;
+    margin: 0 5px;
+    /* background-color: green; */
+}
+.intro-container{
+    /* background-color: var(--primary-color); */
+    background-color: white;
+    /* margin: 10px; */
+    margin-top: 0px;
+    margin-right: 5px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    border-radius: 20px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+}
+.Logo{
+    font-size: 55px;
+    font-family: "Josefin Sans",sans-serif;
+    font-weight: bold;
+}
+.welcome-container{
+    width: 100%;
+    padding: 5px;
+    /* text-align: center; */
+}
+.welcome-paragraph{
+    font-size:20px ;
+    font-family: "Josefin Sans",sans-serif;
+    margin: 5px;
+}
+.header-img{
+    width: 175px;
+    height: 175px;
+    margin-right: 25px;
+}
+
+  @media (max-width: 992px) {
+    .right-container{
+        width: 78%;
+    }
+    .Logo{
+        font-size: 50px;
+    }
+    .welcome-paragraph{
+        font-size:18px ;
+    }
+    .header-img{
+        width: 170px;
+        height: 170px;
+    }
+  }
+  @media (max-width: 768px) {
+    .Logo{
+        font-size: 45px;
+    }
+    .welcome-paragraph{
+        font-size:16px ;
+    }
+    .header-img{
+        width: 155px;
+        height: 155px;
+    }
+  }
