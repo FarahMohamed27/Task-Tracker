@@ -4,56 +4,64 @@ import Backdrop from '../Backdrop/Backdrop';
 import TaskForm from '../TaskForm/TaskForm';
 import {useParams} from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
+import { useSelector, useDispatch } from 'react-redux';
+import { tasksActions } from '../../store/tasksSlice';
 
 export default function Tasks() {
-  const [tasks, setTasks] = useState([]);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [currentTask, setCurrentTask] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [view, setView] = useState(false);
+  const dispatch = useDispatch();
+  const tasks = useSelector((state) => state.tasks) ;
+  console.log(tasks)
+  const isFormOpen = useSelector((state) => state.isFormOpen);
+  const currentTask = useSelector((state) => state.currentTask);
+  const currentPage = useSelector((state) => state.currentPage);
+  const view = useSelector((state)=> state.view);
   const TasksPerPage = 4;
 
   const {status} = useParams();
 
   useEffect(() => {
     const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    setTasks(storedTasks);
+    console.log(storedTasks)
+    dispatch(tasksActions.setTasks(storedTasks));
   }, []);
 
   function handleAddTask(){
-    setIsFormOpen(true);
-    setCurrentTask(null);
-    setView(false);
+    console.log("xxxx")
+    dispatch(tasksActions.setIsFormOpen(true));
+    dispatch(tasksActions.setCurrentTask(null));
+    dispatch(tasksActions.setView(false));
   }
 
   function handleEditTask(task){
-      setView(false);
-      setIsFormOpen(true);
-      setCurrentTask(task);
+      dispatch(tasksActions.setIsFormOpen(true));
+      dispatch(tasksActions.setView(false));
+      dispatch(tasksActions.setCurrentTask(task));
   }
   function handleDeleteTask(index){
     const updatedTasks = tasks.filter((task)=> task.id !== index);
-    setTasks(updatedTasks);
+    dispatch(tasksActions.setTasks(updatedTasks))
     localStorage.setItem('tasks', JSON.stringify(updatedTasks));
   }
 
   function handleTaskView(task){
-    setView(true);
-    setCurrentTask(task)
-    setIsFormOpen(true)
+    dispatch(tasksActions.setIsFormOpen(true));
+    dispatch(tasksActions.setView(true));
+    dispatch(tasksActions.setCurrentTask(task));
   }
 
   function handleFormSubmit(task){
+    console.log('Submitting Task:', task);
     const updatedTasks = currentTask
-    ? tasks.map(t => t.id === task.id ? task : t)
-    : [...tasks, { ...task, id: Date.now() }];
-    setTasks(updatedTasks);
+      ? tasks.map(t => t.id === task.id ? task : t)
+      : [...tasks, { ...task, id: Date.now() }];
+    
+    dispatch(tasksActions.setTasks(updatedTasks));
     localStorage.setItem('tasks', JSON.stringify(updatedTasks));
-    setIsFormOpen(false);
+    dispatch(tasksActions.setIsFormOpen(false));
   }
 
   const handlePageChange = (event, value) => {
-    setCurrentPage(value);
+    dispatch(tasksActions.setCurrentPage(value));
   };
 
 
@@ -71,7 +79,7 @@ export default function Tasks() {
       {paginatedTasks.length === 0 && currentPage !== 1 &&
         <h2 className='empty-tasks'>No tasks available in this page</h2>
       }
-      {paginatedTasks.map((item, index) => <div key={index} className={`task-card ${item.TaskStatus === 'in progress' ? 'in-progress' : item.TaskStatus === 'not started'? 'not-started' : 'finished'}`}> 
+      {paginatedTasks?.map((item, index) => <div key={index} className={`task-card ${item.TaskStatus === 'in progress' ? 'in-progress' : item.TaskStatus === 'not started'? 'not-started' : 'finished'}`}> 
         <h2 className='task-title'>{item.title}</h2>
         <h3 className='task-status'>{item.TaskStatus}</h3>
         <p className='task-description'>{item.description === ''? `No Description` : item.description}</p>
@@ -86,18 +94,17 @@ export default function Tasks() {
     <div className='tasks-pagination'>
       <Pagination count={Math.ceil(filteredTasks.length / TasksPerPage)} page={currentPage} onChange={handlePageChange} variant="outlined" color="primary" />
     </div>
-
     {isFormOpen && !view && (
-        <Backdrop onClose={() => setIsFormOpen(false)}>
+        
+        <Backdrop onClose={() => dispatch(tasksActions.setIsFormOpen(false))}>
           <TaskForm
-            initialData={currentTask || { title: '', description: '', TaskStatus: 'not started' }}
             onSubmit={handleFormSubmit}
-            onCancel={() => setIsFormOpen(false)}
+            onCancel={() => dispatch(tasksActions.setIsFormOpen(false))}
           />
         </Backdrop>
       )}
       {isFormOpen && view && (
-        <Backdrop onClose={() => setIsFormOpen(false)}>
+        <Backdrop onClose={() => dispatch(tasksActions.setIsFormOpen(false))}>
           <div className={`backdrop-task ${currentTask.TaskStatus === 'in progress' ? 'in-progress-bd' : currentTask.TaskStatus === 'not started'? 'not-started-bd' : 'finished-bd'}`}>
               <h2 className='backdrop-task-title'>{currentTask.title}</h2>
               <h3 className='backdrop-task-status'>{currentTask.TaskStatus}</h3>
@@ -106,7 +113,7 @@ export default function Tasks() {
               className='backdrop-task-desc'
               readOnly = {true}
               />
-              <button onClick={()=> setIsFormOpen(false)} className='backdrop-task-close'>close</button>
+              <button onClick={()=> dispatch(tasksActions.setIsFormOpen(false))} className='backdrop-task-close'>close</button>
           </div>
         </Backdrop>
       )}
