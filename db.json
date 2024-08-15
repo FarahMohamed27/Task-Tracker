@@ -1,0 +1,52 @@
+{
+  "tasks": [
+    {
+      "id": "20240815T193017229Z",
+      "title": "Task Sample x",
+      "description": "Description x",
+      "TaskStatus": "not started"
+    },
+    {
+      "id": "20240815T200017325Z",
+      "title": "Task 3",
+      "description": "Sample Task",
+      "TaskStatus": "finished"
+    },
+    {
+      "id": "20240815T200106210Z",
+      "title": "Task Example",
+      "description": "Testing",
+      "TaskStatus": "in progress"
+    }
+  ],
+  "userData":[
+    {
+      "id": "1",
+      "userName": "userName1",
+      "email": "userName1@gmail.com",
+      "phone":"0123456789",
+      "password":"12345678"
+    },
+    {
+      "id": "2",
+      "userName": "userName2",
+      "email": "userName2@gmail.com",
+      "phone":"0123456789",
+      "password":"12345678"
+    },
+    {
+      "id": "3",
+      "userName": "userName3",
+      "email": "userName3@gmail.com",
+      "phone":"0123456789",
+      "password":"12345678"
+    },
+    {
+      "id": "4",
+      "userName": "userName4",
+      "email": "userName4@gmail.com",
+      "phone":"0123456789",
+      "password":"12345678"
+    }
+  ]
+}
