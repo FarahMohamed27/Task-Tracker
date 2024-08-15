@@ -4,20 +4,45 @@ import './Login.css';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Logo from '../../assets/logo-no-background.png'
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import {authActions} from '../../store/AuthSlice';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
+  const dispatch = useDispatch();
+  // const [email, setEmail] = useState('');
+  const email = useSelector((state) => state.Auth.email);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (email && password) {
-      localStorage.setItem('authenticated', 'true');
-      navigate('/');
+      const response = await axios.get(`http://localhost:3001/userData?email=${email}`)
+      const userData = response.data[0];
+      console.log(userData)
+      if(userData && (password === userData.password)){
+        dispatch(authActions.login({
+          email: userData.email,
+          userName: userData.userName,
+          phone: userData.phone
+        }))
+
+        localStorage.setItem('authenticated', 'true');
+        navigate('/');
+      }
+      else {
+        console.log('Invalid login credentials');
+      }
+      
     } 
   };
+
+  const handleEmailChange = (e) => {
+    dispatch(authActions.login({ email: e.target.value, phone: '', userName:''}));
+  };
+  
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -33,9 +58,8 @@ export default function Login() {
             className='form-login-input'
             type="email"
             placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             required
+            onChange={handleEmailChange}
           />
           <input
             className='form-login-input'
