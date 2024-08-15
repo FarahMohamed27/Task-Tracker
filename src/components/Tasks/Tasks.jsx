@@ -6,27 +6,32 @@ import {useParams} from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
 import { useSelector, useDispatch } from 'react-redux';
 import { tasksActions } from '../../store/tasksSlice';
+import useData from '../../hooks/useData';
+import axios from 'axios'
+import { mutate } from 'swr';
 
 export default function Tasks() {
+  const { tasks, isLoading, isError, refreshData } = useData();
   const dispatch = useDispatch();
-  const tasks = useSelector((state) => state.tasks) ;
-  console.log(tasks)
-  const isFormOpen = useSelector((state) => state.isFormOpen);
-  const currentTask = useSelector((state) => state.currentTask);
-  const currentPage = useSelector((state) => state.currentPage);
+  const isFormOpen = useSelector((state) => state.tasks.isFormOpen);
+  const currentTask = useSelector((state) => state.tasks.currentTask);
+  const currentPage = useSelector((state) => state.tasks.currentPage);
   const view = useSelector((state)=> state.view);
   const TasksPerPage = 4;
 
   const {status} = useParams();
+  function generateId() {
+    const now = new Date();
+    return now.toISOString().replace(/[-:.]/g, ''); 
+}
 
   useEffect(() => {
-    const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    console.log(storedTasks)
-    dispatch(tasksActions.setTasks(storedTasks));
-  }, []);
+    
+    dispatch(tasksActions.setTasks(tasks));
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks, dispatch]);
 
   function handleAddTask(){
-    console.log("xxxx")
     dispatch(tasksActions.setIsFormOpen(true));
     dispatch(tasksActions.setCurrentTask(null));
     dispatch(tasksActions.setView(false));
@@ -37,10 +42,18 @@ export default function Tasks() {
       dispatch(tasksActions.setView(false));
       dispatch(tasksActions.setCurrentTask(task));
   }
-  function handleDeleteTask(index){
-    const updatedTasks = tasks.filter((task)=> task.id !== index);
-    dispatch(tasksActions.setTasks(updatedTasks))
-    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+ 
+  async function handleDeleteTask(id){
+    try {
+      const response = await axios.delete(`http://localhost:3001/tasks/${id}`);
+      console.log('Delete response:', response);
+      const updatedTasks = tasks.filter((task) => task.id !== id);
+      mutate('http://localhost:3001/tasks', updatedTasks, false);
+      dispatch(tasksActions.setTasks(updatedTasks));
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
   }
 
   function handleTaskView(task){
@@ -49,14 +62,25 @@ export default function Tasks() {
     dispatch(tasksActions.setCurrentTask(task));
   }
 
-  function handleFormSubmit(task){
+  async function handleFormSubmit(task){
     console.log('Submitting Task:', task);
-    const updatedTasks = currentTask
-      ? tasks.map(t => t.id === task.id ? task : t)
-      : [...tasks, { ...task, id: Date.now() }];
-    
-    dispatch(tasksActions.setTasks(updatedTasks));
-    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    if(currentTask){
+      await axios.put(`http://localhost:3001/tasks/${currentTask.id}`, task);
+      const updatedTasks = tasks.map(t => t.id === currentTask.id ? task : t);
+      dispatch(tasksActions.setTasks(updatedTasks));
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+      mutate('http://localhost:3001/tasks', updatedTasks, false);
+
+    } 
+    else{
+      task.id = generateId();
+      const response = await axios.post("http://localhost:3001/tasks", task);
+      const newTask = response.data; 
+      const updatedTasks = [...tasks, newTask];
+      dispatch(tasksActions.setTasks(updatedTasks));
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+      mutate('http://localhost:3001/tasks', updatedTasks, false);
+    }
     dispatch(tasksActions.setIsFormOpen(false));
   }
 
