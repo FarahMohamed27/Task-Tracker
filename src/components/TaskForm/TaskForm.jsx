@@ -4,8 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 
 export default function TaskForm({ onSubmit, onCancel }) {
-    const currentTask = useSelector((state) => state.currentTask);
-    console.log(currentTask)
+    const currentTask = useSelector((state) => state.tasks.currentTask);
     const [title, setTitle] = useState(currentTask?.title || '');
     const [description, setDescription] = useState(currentTask?.description || '');
     const [TaskStatus, setStatus] = useState(currentTask?.TaskStatus || 'not started');
