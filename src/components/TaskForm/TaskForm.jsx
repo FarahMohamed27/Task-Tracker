@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import './TaskForm.css' 
+import { useSelector, useDispatch } from 'react-redux';
 
 
-
-export default function TaskForm({ initialData, onSubmit, onCancel }) {
-    const [title, setTitle] = useState(initialData.title || '');
-    const [description, setDescription] = useState(initialData.description || '');
-    const [TaskStatus, setStatus] = useState(initialData.TaskStatus || 'not started');
+export default function TaskForm({ onSubmit, onCancel }) {
+    const currentTask = useSelector((state) => state.currentTask);
+    console.log(currentTask)
+    const [title, setTitle] = useState(currentTask?.title || '');
+    const [description, setDescription] = useState(currentTask?.description || '');
+    const [TaskStatus, setStatus] = useState(currentTask?.TaskStatus || 'not started');
   
     useEffect(() => {
-      setTitle(initialData.title || '');
-      setDescription(initialData.description || '');
-      setStatus(initialData.TaskStatus || 'not started');
-    }, [initialData]);
+      setTitle(currentTask?.title || '');
+      setDescription(currentTask?.description || '');
+      setStatus(currentTask?.TaskStatus || 'not started');
+    }, [currentTask]);
   
     const handleSubmit = (e) => {
       e.preventDefault();
-      onSubmit({ id: initialData.id || Date.now(), title, description, TaskStatus });
+      onSubmit({ id: currentTask?.id || Date.now(), title, description, TaskStatus });
     };
   
     return (
