@@ -16,7 +16,7 @@ export default function Tasks() {
   const isFormOpen = useSelector((state) => state.tasks.isFormOpen);
   const currentTask = useSelector((state) => state.tasks.currentTask);
   const currentPage = useSelector((state) => state.tasks.currentPage);
-  const view = useSelector((state)=> state.view);
+  const view = useSelector((state)=> state.tasks.view);
   const TasksPerPage = 4;
 
   const {status} = useParams();
