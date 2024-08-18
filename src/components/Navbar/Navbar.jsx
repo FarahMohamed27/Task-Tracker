@@ -2,20 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import './Navbar.css'
 import Logo from '../../assets/logo-no-background.png'
+import { useSelector, useDispatch } from 'react-redux'
+import {authActions} from '../../store/AuthSlice';
 
 export default function Navbar() {
+    const dispatch = useDispatch();
+    const isAuthenticated = useSelector((state)=> state.Auth.isAuthenticated);
     const navigate = useNavigate();
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
-    useEffect(() => {
-      const authStatus = localStorage.getItem('authenticated') === 'true';
-      setIsAuthenticated(authStatus);
-    }, []);
-
+    
     const handleAuthButton = () => {
         if (isAuthenticated) {
-          localStorage.removeItem('authenticated');
-          setIsAuthenticated(false);
+          dispatch(authActions.logout());
           navigate('/');
         } else {
           navigate('/login');
@@ -24,7 +21,6 @@ export default function Navbar() {
 
   return (
     <div className='Navbar-container'>
-      {/* <h2 className='Navbar-title'>Task Tracker</h2> */}
       <img src={Logo} alt="Logo" className='Navbar-logo'/>
       <button onClick={handleAuthButton} className='auth-button'> {isAuthenticated ? 'Logout' : 'Login'}</button>
     </div>

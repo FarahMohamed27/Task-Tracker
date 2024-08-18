@@ -20,6 +20,7 @@ const AuthSlice = createSlice({
             state.userName = '';
             state.isAuthenticated = false;
             state.phone = '';
+            
         },
     }
 })
