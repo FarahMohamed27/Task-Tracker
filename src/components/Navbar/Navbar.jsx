@@ -9,13 +9,14 @@ export default function Navbar() {
     const dispatch = useDispatch();
     const isAuthenticated = useSelector((state)=> state.Auth.isAuthenticated);
     const navigate = useNavigate();
-    
+
     const handleAuthButton = () => {
         if (isAuthenticated) {
           dispatch(authActions.logout());
           navigate('/');
         } else {
           navigate('/login');
+           
         }
       };
 
