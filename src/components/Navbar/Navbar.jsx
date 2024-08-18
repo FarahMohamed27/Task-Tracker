@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import './Navbar.css'
 import Logo from '../../assets/logo-no-background.png'
 import { useSelector, useDispatch } from 'react-redux'
-import {authActions} from '../../store/AuthSlice';
+import {logout} from '../../store/AuthSlice'
 
 export default function Navbar() {
     const dispatch = useDispatch();
@@ -12,11 +12,10 @@ export default function Navbar() {
 
     const handleAuthButton = () => {
         if (isAuthenticated) {
-          dispatch(authActions.logout());
+          dispatch(logout());
           navigate('/');
         } else {
-          navigate('/login');
-           
+          navigate('/login');   
         }
       };
 
