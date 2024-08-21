@@ -22,7 +22,7 @@ export default function Navbar() {
   return (
     <div className='Navbar-container'>
       <img src={Logo} alt="Logo" className='Navbar-logo'/>
-      <button onClick={handleAuthButton} className='auth-button'> {isAuthenticated ? 'Logout' : 'Login'}</button>
+      <button onClick={handleAuthButton} className='auth-button'> {isAuthenticated ? 'Logout' : 'Login/Signup'}</button>
     </div>
   )
 }
